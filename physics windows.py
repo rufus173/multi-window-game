@@ -11,9 +11,15 @@ class window_handler:
         self.windows[name] = window_container
         self.update_windows()
         return window_container["root"]
+    def delete_window(self,name):
+        self.windows[name]["root"].destroy()
     def update_windows(self):#since tkinter hates threading ima have to update the windows within the main thread
-        for i in self.windows:
-            self.windows[i]["root"].update()
+        try:
+            for i in self.windows:
+                self.windows[i]["root"].update()
+        except Exception as problem:
+            print("problem with the window update")
+            print(problem)
 class main(window_handler):
     def __init__(self) -> None:
         super().__init__()
@@ -28,9 +34,11 @@ class main(window_handler):
         self.windows["window 2"]["text"].pack()
         self.mainloop()
     def trigger1(self):
-        self.windows["window 2"]["text"].insert(tkinter.END,"based\n")
+        for i in range(10):
+            self.delete_window(str(i))
     def trigger2(self):
-        self.windows["window 2"]["text"].insert(tkinter.END,"cringe\n")
+        for i in range(10):
+            self.new_window(str(i))
     def mainloop(self):
         while True:
             self.update_windows()
