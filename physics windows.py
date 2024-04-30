@@ -1,6 +1,7 @@
 import tkinter
 import time
 import threading
+import random
 print("starting")
 class window_handler:
     def __init__(self) -> None:
@@ -13,6 +14,7 @@ class window_handler:
         return window_container["root"]
     def delete_window(self,name):
         self.windows[name]["root"].destroy()
+        self.windows.pop(name)
     def update_windows(self):#since tkinter hates threading ima have to update the windows within the main thread
         try:
             for i in self.windows:
@@ -21,28 +23,28 @@ class window_handler:
             print("problem with the window update")
             print(problem)
     def move_window(self,name,x,y):#supply the name and position to move it by (not to)
-        root = self.windows[name]["root"]
-        root.geometry("+"+str(root.winfo_x()+x)+"+"+str(root.winfo_y()+y))
+        try:
+            root = self.windows[name]["root"]
+            y = y-32 #weird bug where the .geometry() function y position is skewed by an extra 32. could be to do with the top window bar??????
+            root.geometry("+"+str(root.winfo_x()+x)+"+"+str(root.winfo_y()+y))
+        except Exception as problem:
+            print(problem)
 class main(window_handler):
     def __init__(self) -> None:
         super().__init__()
-        win1root = self.new_window("window 1")
-        win2root = self.new_window("window 2")
-        win3root = self.new_window("window 3")
-        self.windows["window 1"]["button"] = tkinter.Button(win1root,text="button",command=self.trigger1)
-        self.windows["window 1"]["button"].pack()
-        self.windows["window 3"]["button"] = tkinter.Button(win3root,text="button",command=self.trigger2)
-        self.windows["window 3"]["button"].pack()
-        self.windows["window 2"]["text"] = tkinter.Button(win2root,text="move down 10",command=lambda:self.move_window("window 2",0,10))
-        self.windows["window 2"]["text"].pack()
+        for i in range(10):
+            i = str(i)
+            root = self.new_window(i)
+            self.windows[i]["button"] = tkinter.Button(root,text="kill",command=lambda i=i:self.delete_window(i))
+            self.windows[i]["button"].pack()
+        print(self.windows)
         self.mainloop()
-    def trigger1(self):
-        for i in range(10):
-            self.delete_window(str(i))
-    def trigger2(self):
-        for i in range(10):
-            self.new_window(str(i))
     def mainloop(self):
         while True:
-            self.update_windows()
+            try:
+                for i in self.windows:
+                    self.move_window(i,random.randint(-1,1),random.randint(-1,1))
+                self.update_windows()
+            except:
+                pass
 main()
