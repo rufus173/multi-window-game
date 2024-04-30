@@ -1,6 +1,6 @@
 import tkinter
 import time
-import threading
+import threading #for later use
 import random
 print("starting")
 class window_handler:
