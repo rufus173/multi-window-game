@@ -20,7 +20,7 @@ class window_handler:
         except Exception as problem:
             print("problem with the window update")
             print(problem)
-    def move_window(self,name,x,y):
+    def move_window(self,name,x,y):#supply the name and position to move it by (not to)
         root = self.windows[name]["root"]
         root.geometry("+"+str(root.winfo_x()+x)+"+"+str(root.winfo_y()+y))
 class main(window_handler):
