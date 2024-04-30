@@ -13,6 +13,7 @@ class window_handler:
         self.update_windows()
         return window_container["root"]
     def delete_window(self,name):
+        self.lock_wait()
         self.windows[name]["root"].destroy()
         self.windows.pop(name)
     def update_windows(self):#since tkinter hates threading ima have to update the windows within the main thread
@@ -29,6 +30,13 @@ class window_handler:
             root.geometry("+"+str(root.winfo_x()+x)+"+"+str(root.winfo_y()+y))
         except Exception as problem:
             print(problem)
+    def lock_dictionary(self):#creates a lock variable so that the dictionary can be prevented from being modifyed
+        self.lock = True
+    def unlock_dictionary(self):
+        self.lock = False
+    def lock_wait(self):#waits for the lock to release before continuing
+        while self.lock:
+            pass
 class main(window_handler):
     def __init__(self) -> None:
         super().__init__()
@@ -41,10 +49,9 @@ class main(window_handler):
         self.mainloop()
     def mainloop(self):
         while True:
-            try:
-                for i in self.windows:
-                    self.move_window(i,random.randint(-1,1),random.randint(-1,1))
-                self.update_windows()
-            except:
-                pass
+            self.lock_dictionary()
+            for i in self.windows:
+                self.move_window(i,random.randint(-1,1),random.randint(-1,1))
+            self.unlock_dictionary()
+            self.update_windows()
 main()
