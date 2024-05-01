@@ -45,13 +45,14 @@ class main(window_handler):
             root = self.new_window(i)
             self.windows[i]["button"] = tkinter.Button(root,text="kill",command=lambda i=i:self.delete_window(i))
             self.windows[i]["button"].pack()
+            self.windows[i]["velocity"] = [[-1,1][random.randint(0,1)],[-1,1][random.randint(0,1)]]
         print(self.windows)
         self.mainloop()
     def mainloop(self):
         while True:
             self.lock_dictionary()
             for i in self.windows:
-                self.move_window(i,random.randint(-1,1),random.randint(-1,1))
+                self.move_window(i,self.windows[i]["velocity"][0],self.windows[i]["velocity"][1])
             self.unlock_dictionary()
             self.update_windows()
 main()
